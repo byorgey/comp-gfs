@@ -271,4 +271,16 @@ by\dots integer partitions (???)
 The hope is that some non-obvious algorithms will ``fall out'' of
 this, for e.g. enumerating unlabelled non-regular species.
 
+\section{Questions}
+\label{sec:questions}
+
+Questions for further consideration:
+
+\begin{itemize}
+\item It seems like weighted species ought to fit nicely into this
+  framework.  Do they?  What are the details?
+\item Can we fit Boltzmann sampling into this framework too?
+  \emph{e.g.} do Boltzmann samplers have a semigroup structure?
+\end{itemize}
+
 \end{document}
