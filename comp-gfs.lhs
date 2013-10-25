@@ -25,6 +25,7 @@
 \renewcommand{\True}{\cons{T}}
 
 \newcommand{\FinSet}{\ensuremath{\mathbf{FinSet}}}
+\newcommand{\I}{\ensuremath{\mathcal{I}}}
 
 \newcommand{\universe}{\ensuremath{\mathcal{U}}}
 \newcommand{\defeq}{\mathrel{:\equiv}}
@@ -32,6 +33,8 @@
 \newcommand{\fun}[1]{\lambda #1.\ }
 
 \newcommand{\param}{\mathord{-}}
+
+\newcommand{\unl}[1]{\widetilde{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Title
@@ -48,6 +51,24 @@
 \begin{document}
 
 \maketitle
+
+\setcounter{section}{-1}
+\section{Introduction and motivation}
+\label{sec:motivation}
+
+Show some example Haskell code for \emph{e.g.} enumerating values of
+algebraic data types, or \emph{e.g.} for computing isomorphism with
+$\N$.  Question: how do we extend this to certain types of non-regular
+structures involving composition (\emph{e.g.} permutations = nonempty
+sets of cycles?).  Give some intuition why this is nonobvious and
+hard.
+
+Corresponds to the observation that ogfs/egfs do not preserve
+composition for non-regular species.  In combinatorics, solved by
+generalizing both to \emph{cycle index series}.  Idea: give
+a framework for interpreting generating functions computationally, and
+show how to extend it all the way to cycle index series.  Then the
+algorithms we want will just ``fall out'' (at least, that is the hope!).
 
 \section{Semirings}
 \label{sec:intro}
@@ -83,52 +104,78 @@ is, $\phi(0_S) = 0_T$, $\phi(1_S) = 1_T$, $\phi(a + b) = \phi(a) +
 example, that we have the sequence of semiring homomorphisms
 \[
 \xymatrix{
-  (\FinSet, \uplus, \times, \varnothing, \{\star\})
+  (\FinSet, \uplus, \varnothing, \times, \{\star\})
   \ar[d]^{||\param||} \\
-  (\N,+,\cdot,0,1)
+  (\N,+,0,\cdot,1)
   \ar[d]^{> 0} \\
-  (\B, \lor, \land, \False, \True)
+  (\B, \lor, \False, \land, \True)
 }
 \]
 going from a set $S$, to its size $||S||$, to its inhabitation $||S||>0$.
 
+\section{Formal power series}
+\label{sec:power-series}
+
 In connection with the theory of species, we typically consider formal
 power series with coefficients taken from some numeric type like
-natural numbers or integers.  However, as is well-known, given any
+natural numbers or integers.  However, there is nothing particularly
+special about numbers in this context.  As is well-known, given any
 semiring $S$ we may form the semiring $S[[x]]$ of formal power series
-with coefficients in $S$, with addition and multiplication of formal
-power series defined in the usual way.  Note also that any semiring
-homomorphism $\phi : S \to T$ induces a homomorphism over the
-associated semirings of formal power series, which we notate as
-$\phi[[x]] : S[[x]] \to T[[x]]$ (that is, $\param [[x]]$ is an endofunctor
-on the category of semirings).
+with coefficients in $S$, with addition and multiplication defined in
+the usual way. In particular, $S[[x]]$ can be viewed as what we get by
+adjoining a new distinguished element $x$ to $S$, and then taking the
+completion to form a semiring over the resulting set.  Note also that
+any semiring homomorphism $\phi : S \to T$ induces a homomorphism over
+the associated semirings of formal power series, which we notate as
+$\phi[[x]] : S[[x]] \to T[[x]]$ (that is, $\param [[x]]$ is an
+endofunctor on the category of semirings).
+
+In what follows, it will be useful to keep in mind a different (but
+equivalent) formulation of formal power series: we view the formal
+power series $S[[x]]$ as a \emph{function} $S[[x]] : \N \to S$, giving
+the coefficient at each power of $x$.
 
 \section{Ordinary generating functions}
 \label{sec:ogf}
 
-Define OGFs. Homomorphism from species.  Note if we generalize OGFs
-over arbitrary semirings, we can view the definition of an
-(unlabelled) species itself as an OGF, and the homomorphism from
-species to OGFs is revealed as the OGF homomorphism induced by the
-underlying semiring homomorphism $||\param|| : (\FinSet, \uplus, \times,
-\varnothing, \{\star\}) \to (\N,+,\cdot,0,1)$.  We then consider other
-semiring homomorphisms to and from $\FinSet$, and discover we can
-churn out algorithms to compute things about unlabelled species simply
-by designing the proper semiring + homomorphism and transporting the
-species-expression-as-OGF along the induced OGF homomorphism. (Many of
-these algorithms are well-known and/or ``obvious''.) Exhibit some
-Haskell code.
+To each species $F$ we associate an \term{ordinary generating
+  function} (ogf), $\unl{F}(x)$, defined by \[ \unl{F}(x) = \sum_{n
+  \geq 0} \unl{f}_n x^n, \] where $\unl{f}_n$ denotes the number of
+\term{unlabelled $F$-structures} of size $n$, that is, the number of
+equivalence classes of $F$-structures under relabelling.  This mapping
+from species to ogfs is a semiring homomorphism, that is,
+$(\unl{F+G})(x) = \unl F(x) + \unl G(x)$ and $(\unl{F \cdot G})(x) =
+\unl F(x) \cdot \unl G(x)$.
 
-However, this only works for OGFs.  The idea is to generalize this
-entire analysis from OGFs to EGFs and cycle index series, which
+View species definition itself, $\B \to \FinSet$, as a generating
+function $\N \to \FinSet$ with canonically-labeled structures.  (Can
+recover action on all of $\B$ from action on $\N$, since $\N$ as
+discrete category is the skeleton of $\B$.) (Q: are these naturally
+isomorphic as functors?) Then the well-known mapping to ogfs arises as
+the semiring homomorphism on formal power series induced by the
+semiring homomorphism on the coefficients, $||\param|| : (\FinSet,
+\uplus, \times, \varnothing, \{\star\}) \to (\N,+,\cdot,0,1)$. (Is
+this quite right?  There's a factor of $n!$ to deal with somewhere.)
+
+We then consider other semiring homomorphisms to and from $\FinSet$,
+and discover we can churn out algorithms to compute things about
+unlabelled species simply by designing the proper semiring +
+homomorphism and transporting the species-expression-as-ogf along the
+induced ogf homomorphism. (Many of these algorithms are well-known
+and/or ``obvious''.) Exhibit some Haskell code.
+
+However, this only works for ogfs. (Can we use theory of semiring
+homomorphisms etc. to show why ogfs break down when trying to handle
+unlabelled non-regular species?) The idea is to generalize this
+entire analysis from ogfs to egfs and cycle index series, which
 requires generalizing the notion of semiring.
 
-\section{Indexed semirings}
+\section{Sized semirings}
 \label{sec:indexed-semirings}
 
-\emph{Indexed semirings} are a generalization of semirings where the
+\emph{Sized semirings} are a generalization of semirings where the
 elements have types indexed by a natural number (their ``size'').  In
-particular, an indexed semiring consists of
+particular, a sized semiring consists of
 \begin{itemize}
 \item A type family $S : \N \to \universe$ (where \universe\ denotes
   the universe of types). We use subscripts to denote applications of
@@ -142,35 +189,35 @@ particular, an indexed semiring consists of
   S_{m+n}$.  We usually omit the size arguments.
 \item A distinguished element $1 : S_0$.
 \end{itemize}
-Moreover, these are subject laws analogous to the laws of a semiring:
+Moreover, these are subject to laws analogous to the laws of a
+semiring, listed below.  Sizes are indicated by subscripts; all free
+variables (including sizes) are implicitly universally quantfied.
 \begin{itemize}
-\item $\dep{n:\N} \dep{s : S_n} 0 + s = s + 0 = s$ \hfill ($0$ is an
+\item $0_n + s_n = s_n + 0_n = s_n$ \hfill ($0$ is an
   identity for $+$)
-\item $\dep{n:\N} \dep{s, t, u : S_n} (s +
-  t) + u = s + (t + u)$ \hfill (Associativity of $+$)
-\item $\dep{n:\N} \dep{s, t : S_n} s + t = t + s$ \hfill
+\item $(s_n + t_n) + u_n = s_n + (t_n + u_n)$ \hfill (Associativity of $+$)
+\item $s_n + t_n = t_n + s_n$ \hfill
   (Commutativity of $+$)
-\item $\dep{m, n:\N} \dep{s : S_n} 0_m \cdot s = s \cdot 0_m =
+\item $0_m \cdot s_n = s_n \cdot 0_m =
   0_{m+n}$ \hfill ($0$ is an annihilator for $\cdot$)
-\item $\dep{n:\N} \dep{s : S_n} 1 \cdot s = s
-  \cdot 1 = s$ \hfill ($1$ is an identity for $\cdot$)
-\item $\dep {m, n, p: \N} \dep {s : S_m}
-  \dep {t : S_n} \dep {u : S_p} (s \cdot t) \cdot u = s \cdot (t \cdot
-  u)$ \hfill (Associativity of $\cdot$)
-\item $\dep {m,n : \N} \dep {s : S_m} \dep{t,u : S_n} s \cdot (t + u)
-  = s \cdot t + s \cdot u$ \hfill (Left distributivity)
-\item $\dep {m,n : \N} \dep {s : S_m} \dep{t,u : S_n} (t + u) \cdot s
-  = t \cdot s + u \cdot s$ \hfill (Right distributivity)
+\item $1 \cdot s_n = s_n \cdot 1 = s_n$ \hfill ($1$ is an identity for
+  $\cdot$)
+\item $(s_m \cdot t_n) \cdot u_p = s_m \cdot (t_n \cdot
+  u_p)$ \hfill (Associativity of $\cdot$)
+\item $s_m \cdot (t_n + u_n)
+  = s_m \cdot t_n + s_m \cdot u_n$ \hfill (Left distributivity)
+\item $(t_n + u_n) \cdot s_m
+  = t_n \cdot s_m + u_n \cdot s_m$ \hfill (Right distributivity)
 \end{itemize}
 
-We can make any semiring $S$ into an indexed semiring $R$ by putting a
+We can make any semiring $S$ into a sized semiring $R$ by putting a
 copy of $S$ at every size, that is, by defining $R_n \defeq S$, and
 taking the binary operations of $R$ to be those of $S$, ignoring the
-sizes.  In fact, we can see semirings as precisely those indexed
+sizes.  In fact, we can see semirings as precisely those sized
 semirings where $+$, $\cdot$, and $0$ are defined uniformly over all
 sizes.
 
-For a more interesting example of an indexed semiring, consider the
+For a more interesting example of a sized semiring, consider the
 following definition of the \term{binomial semiring}, $B$. We begin
 with a copy of the natural numbers at each size, $B_n \defeq \N$, and
 take the usual $0$, $1$, and $+$, defined uniformly for all sizes. For
@@ -179,19 +226,47 @@ the product operation, however, we define \[ \cdot_B = \fun {m, n :
 where the product operations on the right-hand side are the usual
 product of natural numbers.  For example, $4_2 \cdot_B 7_3 =
 \binom{5}{2} 28 = 280$.  It is not hard to show that this satisfies
-the indexed semiring laws.
+the sized semiring laws.
+
+Analogue of generating functions over sized semiring $S$ are dependent
+functions $\dep{n:\N} S_n$ (instead of $\N \to S$ for semirings).
+Also denoted $S[[x]]$.
 
 \section{Exponential generating functions}
 \label{sec:egfs}
 
-Show how indexed semirings correspond to egfs (?)
+Show how egfs arise as formal power series over the binomial semiring,
+$B[[x]]$.  Exhibit the sized semiring homomorphism $\FinSet \to B$
+which induces the homomorphism from species to egfs.  Talk about other
+homomorphisms, algorithms on labelled species, etc.
 
-\section{Generalized indexed semirings}
+However, we still can't handle unlabelled species in all generality
+(Q: can we show why using this framework?).  For that we have to
+generalize to cycle index series.
+
+\section{Indexed semirings}
 \label{sec:gen-indexed-semirings}
 
-Index semirings over arbitrary monoids in place of $(\N,+,0)$.  Use
-this to do the appropriate thing for cycle index series, indexed by
-integer partitions (???)
+\term{Indexed semirings} represent a further generalization of sized
+semirings.  Instead of indexing by a natural number size, we index by
+an arbitrary monoid.  In detail, an indexed semiring consists of
+\begin{itemize}
+\item A monoid $(\I, \oplus, \varepsilon)$.  Elements $i,j \in \I$ are
+  called \term{indices}.
+\item A type family $S : \I \to \universe$, where applications of $S$
+  are again denoted using subscripts, $S_i$.
+\item A binary operation $\_ + \_ : \dep{i:\I} S_i \to S_i \to S_i$.
+\item A distinguished family of elements $0 : \dep{i:\I} S_i$.
+\item A binary operation $\_ \cdot \_ : \dep{i,j:\I} S_i \to S_j \to
+  S_{i \oplus j}$.
+\item A distinguished element $1 : S_\varepsilon$.
+\end{itemize}
+In addition, indexed semirings are subject to laws exactly parallel to
+those for sized semirings, in such a way that every sized semiring is
+automatically an indexed semiring indexed by $(\N,+,0)$.
+
+Use this to do the appropriate thing for cycle index series, indexed
+by\dots integer partitions (???)
 
 The hope is that some non-obvious algorithms will ``fall out'' of
 this, for e.g. enumerating unlabelled non-regular species.
