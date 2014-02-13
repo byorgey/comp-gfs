@@ -148,15 +148,21 @@ from species to ogfs is a semiring homomorphism, that is,
 $(\unl{F+G})(x) = \unl F(x) + \unl G(x)$ and $(\unl{F \cdot G})(x) =
 \unl F(x) \cdot \unl G(x)$.
 
-View species definition itself, $\B \to \FinSet$, as a generating
-function $\N \to \FinSet$ with canonically-labeled structures.  (Can
-recover action on all of $\B$ from action on $\N$, since $\N$ as
-discrete category is the skeleton of $\B$.) (Q: are these naturally
-isomorphic as functors?) Then the well-known mapping to ogfs arises as
-the semiring homomorphism on formal power series induced by the
-semiring homomorphism on the coefficients, $||\param|| : (\FinSet,
-\uplus, \times, \varnothing, \{\star\}) \to (\N,+,\cdot,0,1)$. (Is
-this quite right?  There's a factor of $n!$ to deal with somewhere.)
+Note \emph{regular species} are precisely those we can build from the
+free semiring on $0$,$1$,$X$.  View species definition itself, $\B \to
+\FinSet$, as a generating function $\N \to \FinSet$ with
+canonically-labeled \emph{equivalence classes} of structures.  For
+regular species, we can recover the action on all of $\B$ from action
+on $\N$, since $\N$ as discrete category is the skeleton of $\B$.
+(Note this does NOT work for non-regular species, since in particular
+we lose information about the action of bijections on the sets of
+structures.  For regular species it is always entirely regular and can
+thus be discounted.)
+
+Then the well-known mapping to ogfs arises as the semiring
+homomorphism on formal power series induced by the semiring
+homomorphism on the coefficients, $||\param|| : (\FinSet, \uplus,
+\times, \varnothing, \{\star\}) \to (\N,+,\cdot,0,1)$.
 
 We then consider other semiring homomorphisms to and from $\FinSet$,
 and discover we can churn out algorithms to compute things about
@@ -165,10 +171,7 @@ homomorphism and transporting the species-expression-as-ogf along the
 induced ogf homomorphism. (Many of these algorithms are well-known
 and/or ``obvious''.) Exhibit some Haskell code.
 
-However, this only works for ogfs. (Can we use theory of semiring
-homomorphisms etc. to show why ogfs break down when trying to handle
-unlabelled non-regular species? This probably has to do with however
-the factor of $n!$ is handled.) The idea is to generalize this
+However, this only works for ogfs.  The idea is to generalize this
 entire analysis from ogfs to egfs and cycle index series, which
 requires generalizing the notion of semiring.
 
