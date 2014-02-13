@@ -123,10 +123,11 @@ special about numbers in this context.  As is well-known, given any
 semiring $S$ we may form the semiring $S[[x]]$ of formal power series
 with coefficients in $S$, with addition and multiplication defined in
 the usual way. In particular, $S[[x]]$ can be viewed as what we get by
-adjoining a new distinguished element $x$ to $S$, and then taking the
-completion to form a semiring over the resulting set.  Note also that
-any semiring homomorphism $\phi : S \to T$ induces a homomorphism over
-the associated semirings of formal power series, which we notate as
+adjoining a new distinguished element $x$ to $S$, subject only to $x
+\cdot s = s \cdot x$ for all $s \in S$, and then taking the completion
+to form a semiring over $S \uplus \{x\}$.  Note also that any
+semiring homomorphism $\phi : S \to T$ induces a homomorphism over the
+associated semirings of formal power series, which we notate as
 $\phi[[x]] : S[[x]] \to T[[x]]$ (that is, $\param [[x]]$ is an
 endofunctor on the category of semirings).
 
@@ -166,7 +167,8 @@ and/or ``obvious''.) Exhibit some Haskell code.
 
 However, this only works for ogfs. (Can we use theory of semiring
 homomorphisms etc. to show why ogfs break down when trying to handle
-unlabelled non-regular species?) The idea is to generalize this
+unlabelled non-regular species? This probably has to do with however
+the factor of $n!$ is handled.) The idea is to generalize this
 entire analysis from ogfs to egfs and cycle index series, which
 requires generalizing the notion of semiring.
 
@@ -281,6 +283,8 @@ Questions for further consideration:
   framework.  Do they?  What are the details?
 \item Can we fit Boltzmann sampling into this framework too?
   \emph{e.g.} do Boltzmann samplers have a semigroup structure?
+\item Other things that might be interesting as semigroups: parsers,
+  pretty printers?
 \end{itemize}
 
 \end{document}
