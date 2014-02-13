@@ -228,7 +228,8 @@ the product operation, however, we define \[ \cdot_B = \fun {m, n :
 where the product operations on the right-hand side are the usual
 product of natural numbers.  For example, $4_2 \cdot_B 7_3 =
 \binom{5}{2} 28 = 280$.  It is not hard to show that this satisfies
-the sized semiring laws.
+the sized semiring laws; for example, associativity of multiplication
+holds since $(a_ib_j)c_k = a_i(b_jc_k) = \binom{i+j+k}{i,j,k} abc$.
 
 Analogue of generating functions over sized semiring $S$ are dependent
 functions $\dep{n:\N} S_n$ (instead of $\N \to S$ for semirings).
