@@ -136,7 +136,7 @@ equivalent) formulation of formal power series: we view the formal
 power series $S[[x]]$ as a \emph{function} $S[[x]] : \N \to S$, giving
 the coefficient at each power of $x$.
 
-\section{Ordinary generating functions}
+\section{Ordinary generating functions and unlabelled species}
 \label{sec:ogf}
 
 To each species $F$ we associate an \term{ordinary generating
@@ -149,7 +149,22 @@ $(\unl{F+G})(x) = \unl F(x) + \unl G(x)$ and $(\unl{F \cdot G})(x) =
 \unl F(x) \cdot \unl G(x)$.
 
 Note \emph{regular species} are precisely those we can build from the
-free semiring on $0$,$1$,$X$.  View species definition itself, $\B \to
+free semiring on $0$,$1$,$X$.
+
+The standard definition of a species is a functor $\B \to \FinSet$,
+where $\B$ is the category of finite sets with bijections as
+morphisms.  Unlabelled structures are equivalence classes of
+(labelled) species structures.  Can view ``unlabelled species'' as
+functors from discrete category $\N$ (the skeleton of $\B$)
+
+\[
+\xymatrix{
+\B \ar[r] \ar[d]_{||\param||} & \FinSet \ar[d] \\
+\N \ar[r] & \FinSet
+}
+\]
+
+View species definition itself, $\B \to
 \FinSet$, as a generating function $\N \to \FinSet$ with
 canonically-labeled \emph{equivalence classes} of structures.  For
 regular species, we can recover the action on all of $\B$ from action
@@ -234,17 +249,37 @@ product of natural numbers.  For example, $4_2 \cdot_B 7_3 =
 the sized semiring laws; for example, associativity of multiplication
 holds since $(a_ib_j)c_k = a_i(b_jc_k) = \binom{i+j+k}{i,j,k} abc$.
 
-Analogue of generating functions over sized semiring $S$ are dependent
-functions $\dep{n:\N} S_n$ (instead of $\N \to S$ for semirings).
-Also denoted $S[[x]]$.
+The analogue of generating functions over a sized semiring $S$ are
+dependent functions $\dep{n:\N} S_n$ (instead of $\N \to S$ for
+semirings).  The type of such generating functions over a sized
+semiring $S$ is also denoted $S[[x]]$; this should not cause confusion
+since it will usually be clear whether $S$ denotes a usual or a sized
+semiring.
 
 \section{Exponential generating functions}
 \label{sec:egfs}
 
-Show how egfs arise as formal power series over the binomial semiring,
-$B[[x]]$.  Exhibit the sized semiring homomorphism $\FinSet \to B$
-which induces the homomorphism from species to egfs.  Talk about other
-homomorphisms, algorithms on labelled species, etc.
+Exponential generating functions (egfs) represent a sequence $f_0,
+f_1, f_2, \dots$ by an infinite polynomial \[ F(x) = \sum_{n \geq 0}
+f_n \frac{x^n}{n!}. \] Given the previous developments, we can now
+view egfs as elements of the semiring $B[[x]]$ of formal power series
+over the (sized) binomial semiring $B$.  To see this, it suffices to
+note that
+\begin{align*}
+  F(x) G(x)
+    &= \left(\sum_{n \geq 0} f_n \frac{x^n}{n!}\right) \left(\sum_{n \geq 0}
+      g_n \frac{x^n}{n!}\right) \\
+    &= \sum_{n \geq 0} \sum_{0 \leq k \leq n} \frac{f_k}{k!}
+    \frac{g_{n-k}}{(n-k)!} x^n \\
+    &= \sum_{n \geq 0} \left(\sum_{0 \leq k \leq n} \binom{n}{k} f_k
+      g_{n-k} \right) \frac{x^n}{n!} \\
+    &= \sum_{n \geq 0} \left(\sum_{0 \leq k \leq n} f_k \cdot_B
+      g_{n-k} \right) \frac{x^n}{n!}
+\end{align*}
+
+Exhibit the sized semiring homomorphism
+$\FinSet \to B$ which induces the homomorphism from species to egfs.
+Talk about other homomorphisms, algorithms on labelled species, etc.
 
 However, we still can't handle unlabelled species in all generality
 (Q: can we show why using this framework?).  For that we have to
