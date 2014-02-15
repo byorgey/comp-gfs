@@ -17,6 +17,7 @@
 \usepackage{amsmath}
 \usepackage{brent}
 \usepackage[all,cmtip]{xy}
+\usepackage{xcolor}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Math typesetting
@@ -25,6 +26,7 @@
 \renewcommand{\True}{\cons{T}}
 
 \newcommand{\FinSet}{\ensuremath{\mathbf{FinSet}}}
+\newcommand{\FinType}{\ensuremath{\mathbf{FinType}}}
 \newcommand{\I}{\ensuremath{\mathcal{I}}}
 
 \newcommand{\universe}{\ensuremath{\mathcal{U}}}
@@ -35,6 +37,21 @@
 \newcommand{\param}{\mathord{-}}
 
 \newcommand{\unl}[1]{\widetilde{#1}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Comments
+
+\newif\ifcomments\commentstrue
+
+\ifcomments
+\newcommand{\authornote}[3]{\textcolor{#1}{[#3 ---#2]}}
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+\else
+\newcommand{\authornote}[3]{}
+\newcommand{\todo}[1]{}
+\fi
+
+\newcommand{\bay}[1]{\authornote{blue}{BAY}{#1}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Title
@@ -73,12 +90,12 @@ algorithms we want will just ``fall out'' (at least, that is the hope!).
 \section{Semirings}
 \label{sec:intro}
 
-For the purposes of this note, a \emph{semiring} $(S,+,0,\cdot,1)$ is
-a type $S$ equipped with binary operations $+$ and $\cdot$ such that
-$(S,+,0)$ is a commutative monoid, $(S,\cdot,1)$ is a monoid, $0 \cdot
-a = a \cdot 0 = 0$, and $\cdot$ distributes over $+$.  As usual, we
-will often abuse notation and denote a semiring simply by its carrier
-type $S$ when the operations are clear from context.  We also
+A \emph{semiring} $(S,+,0,\cdot,1)$ is a type $S$ equipped with binary
+operations $+$ and $\cdot$ such that $(S,+,0)$ is a commutative
+monoid, $(S,\cdot,1)$ is a (not necessarily commutative) monoid, $0
+\cdot a = a \cdot 0 = 0$, and $\cdot$ distributes over $+$.  As usual,
+we will often abuse notation and denote a semiring simply by its
+carrier type $S$ when the operations are clear from context.  We also
 sometimes omit $\cdot$ and denote multiplication by juxtaposition, $a
 \cdot b = ab$.
 
@@ -93,15 +110,27 @@ include:
 \item The integers (or naturals), adjoined with $-\infty$, under
   maximum and addition, $(\Z \cup \{-\infty\},\max,-\infty,+,0)$.
 \item Finite sets under disjoint union and cartesian product,
-  $(\FinSet, \uplus, \varnothing, \times, \{\star\})$.  (Note
-  that the laws hold only up to isomorphism of sets.)
+  $(\FinSet, \uplus, \varnothing, \times, \{\star\})$.  Note that in
+  this case the laws hold only up to isomorphism of sets.  In general,
+  therefore, we allow semirings to be defined not just up to equality,
+  but up to some arbitrary specified equivalence relation.
+\item Isomorphism of sets is a rather coarse notion: any two sets of
+  the same size are isomorphic!  Isomorphism of sets thus collapses
+  things far more than necessary to validate the semiring laws in the
+  previous example. We may instead formulate the more precise semiring
+  of finite \emph{types}, $(\FinType, +, \bot, \times, \top)$ under
+  the operations of coproduct and product, with the void and unit
+  types as identity elements.  In this case, we can set up the
+  relevant equivalence as the one induced by isomorphisms reflecting
+  the semigroup laws, such as $(A + B) + C \cong A + (B + C)$, $\top
+  \times A \cong A$, and so on.
 \end{itemize}
 
-By a semiring \emph{homomorphism} $\phi : S \to T$ we mean simply a
-function $S \to T$ which preserves all the semiring structure, that
-is, $\phi(0_S) = 0_T$, $\phi(1_S) = 1_T$, $\phi(a + b) = \phi(a) +
-\phi(b)$, and $\phi(ab) = \phi(a)\phi(b)$.  Observe, for
-example, that we have the sequence of semiring homomorphisms
+A semiring \emph{homomorphism} $\phi : S \to T$ is a function which
+preserves semiring structure, that is, $\phi(0_S) = 0_T$, $\phi(1_S) =
+1_T$, $\phi(a + b) = \phi(a) + \phi(b)$, and $\phi(ab) =
+\phi(a)\phi(b)$.  Observe, for example, that we have the sequence of
+semiring homomorphisms
 \[
 \xymatrix{
   (\FinSet, \uplus, \varnothing, \times, \{\star\})
@@ -111,7 +140,7 @@ example, that we have the sequence of semiring homomorphisms
   (\B, \lor, \False, \land, \True)
 }
 \]
-going from a set $S$, to its size $||S||$, to its inhabitation $||S||>0$.
+going from a set $S$, to its size $||S||$, to its inhabitation $[||S||>0]$.
 
 \section{Formal power series}
 \label{sec:power-series}
@@ -132,8 +161,8 @@ $\phi[[x]] : S[[x]] \to T[[x]]$ (that is, $\param [[x]]$ is an
 endofunctor on the category of semirings).
 
 In what follows, it will be useful to keep in mind a different (but
-equivalent) formulation of formal power series: we view the formal
-power series $S[[x]]$ as a \emph{function} $S[[x]] : \N \to S$, giving
+equivalent) formulation of formal power series: we view formal
+power series as \emph{functions} $S[[x]] \equiv \N \to S$, giving
 the coefficient at each power of $x$.
 
 \section{Ordinary generating functions and unlabelled species}
@@ -154,18 +183,8 @@ free semiring on $0$,$1$,$X$.
 The standard definition of a species is a functor $\B \to \FinSet$,
 where $\B$ is the category of finite sets with bijections as
 morphisms.  Unlabelled structures are equivalence classes of
-(labelled) species structures.  Can view ``unlabelled species'' as
-functors from discrete category $\N$ (the skeleton of $\B$)
-
-\[
-\xymatrix{
-\B \ar[r] \ar[d]_{||\param||} & \FinSet \ar[d] \\
-\N \ar[r] & \FinSet
-}
-\]
-
-View species definition itself, $\B \to
-\FinSet$, as a generating function $\N \to \FinSet$ with
+(labelled) species structures.  View species definition itself, $\B
+\to \FinSet$, as a generating function $\N \to \FinSet$ with
 canonically-labeled \emph{equivalence classes} of structures.  For
 regular species, we can recover the action on all of $\B$ from action
 on $\N$, since $\N$ as discrete category is the skeleton of $\B$.
@@ -184,7 +203,14 @@ and discover we can churn out algorithms to compute things about
 unlabelled species simply by designing the proper semiring +
 homomorphism and transporting the species-expression-as-ogf along the
 induced ogf homomorphism. (Many of these algorithms are well-known
-and/or ``obvious''.) Exhibit some Haskell code.
+and/or ``obvious''.)
+
+\begin{itemize}
+\item $\N$: count number of unlabelled structures of each size. (ogf)
+\item $\B$: decide whether there are any structures of a given size.
+\end{itemize}
+
+Exhibit some Haskell code.
 
 However, this only works for ogfs.  The idea is to generalize this
 entire analysis from ogfs to egfs and cycle index series, which
@@ -311,6 +337,9 @@ by\dots integer partitions (???)
 
 The hope is that some non-obvious algorithms will ``fall out'' of
 this, for e.g. enumerating unlabelled non-regular species.
+
+\section{Typed semirings}
+\label{sec:typed-semirings}
 
 \section{Questions}
 \label{sec:questions}
